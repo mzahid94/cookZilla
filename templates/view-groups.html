@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <p>
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <ul class=flashes>
+            {% for message in messages %}
+              <li>{{ message }}</li>
+            {% endfor %}
+            </ul>
+          {% endif %}
+        {% endwith %}
+    </p>
+    <h3>All Groups</h3>
+    <table>
+      <th>Group Name</th>
+      <th>Group Creator</th>
+      <th>Join Group</th>
+      
+      {% for group in groups%}
+      <tr>
+        <td>{{group.gName}}</td>
+        <td>{{group.gCreator}}</td>
+        
+        <form action ="/join-group" method="POST">
+        <td><input type="submit" value = "Join Group" /></td>
+    
+        <tr style="display:none;">
+    
+          <td id = "gName"><input type = "hidden" name="gName" value ="{{group.gName}}"/></td>
+          <td id = "gCreator"><input type = "hidden" name="gCreator" value ="{{group.gCreator}}"/></td>
+      </tr>
+    
+    </form> 
+    </tr>
+      {% endfor %}
+    
+    </table>
+   
+</body>
+</html>

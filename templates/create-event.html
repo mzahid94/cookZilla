@@ -1,0 +1,55 @@
+<html>
+<head>
+</head>
+<body>
+    <div>
+       
+        <ul>
+            <li><a href="/home">back</a></li>
+        </ul>
+        <ul>
+            <li><a href="/logout">Logout</a></li>
+        </ul>
+    </div>
+    <p>
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <ul class=flashes>
+            {% for message in messages %}
+              <li>{{ message }}</li>
+            {% endfor %}
+            </ul>
+          {% endif %}
+        {% endwith %}
+    </p>
+    <h1>Create Event</h1>
+<form action="/create-event" method="POST">
+
+	<input type="text" name = "group_name" placeholder="Group Name" required/> </br></br>
+
+	<input type="text" name = "event_name" placeholder="Event Name" required/> </br></br>
+
+  <textarea name = "event_description" id="" cols="30" rows="10" placeholder="Event description"></textarea></br></br>
+  
+  <input type="date" name="event_date" id="" required/> 
+    
+  <h3>Upload Picture</h3>
+  <div id="pictureInput">
+    <input type="file" name = "file[]" multiple/></br></br>
+  </div>
+  
+    <div><br>
+	      <input type="submit" value ="Create"/>
+    </div>
+
+
+	{% if error %}
+		<p class="error"><strong>Error:</strong> {{error}}</p>
+	{% endif %}
+</form>
+
+
+</body>
+
+
+</html>

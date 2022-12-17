@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        table, th, td {
+            border: 1px solid black;
+          }
+    </style>
+</head>
+<body>
+      
+	<h1>Welcome {{username}}</h1>
+    <div>
+        <table>
+            <tr>
+              <th>Recipie</th>
+              <th>Goup/Event</th>
+              
+            </tr>
+            <tr>
+              <td><a href="/create-recipie">Create a recipie</a></td>
+              <td><a href="/create-group">Create Group</a></td>
+             
+            </tr>
+            <tr>
+              <td><a href="/create-step">Add a step for recipie</a></td>
+              <td><a href="/create-event">Create Event</a></td>
+              
+            </tr>
+            <tr>
+              <td><a href="/create-ingredient">Add a ingredient for recipie</a></td>
+              <td><a href="/create-rsvp">RSVP to event</a></td>
+              
+            </tr>
+            <tr>
+              <td><a href="/create-tag">Add a tag for recipie</a></td>
+              <td><a href="/upload-event-picture">Add a picture of an event</a></td>
+              
+            </tr>
+            <tr>
+              <td><a href="/upload-recipie-picture">Add a picture for recipie</a></td>
+              <td></td>
+              
+            </tr>
+          </table>
+    </div>
+   
+    <p>
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <ul class=flashes>
+            {% for message in messages %}
+              <li>{{ message }}</li>
+            {% endfor %}
+            </ul>
+          {% endif %}
+        {% endwith %}
+    </p>
+ 
+  
+    <div>
+      <h2>Search by Tag Name and/or Stars </h2>
+      
+      <form action="/search" method="GET">
+          <input type="text" name="search" value="{{query}}" placeholder = "italian or 5">
+          <input type="submit" value="Search" <b> Example searches: "italian and 5", "italian or 5", "italian", "5" </b> 
+      </form>
+  </div>
+  <div>
+      <h2>Search by Recipie Title</h2>
+      <form action="/search-title" method="GET">
+          <input type="text" name="search" value="{{query}}" placeholder = "lasagna">
+          <input type="submit" value="Search">
+      </form>
+  </div>
+    
+    <ul>
+        <li><a href="/view-recipies">View Your Recipies</a></li>
+        <li><a href="/view-allRecipies">View All Recipies</a></li>
+        <li><a href="/view-groups">View All Groups</a></li>
+        <li><a href="/view-events">View Your Rsvp Events</a></li>
+        <li><a href="/view-createdEvents">View All Events</a></li>
+    </ul>
+    <div>
+      
+         <a href="/logout">Logout</a></li>
+      
+  </div>
+
+
+</body>
+</html>

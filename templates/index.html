@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+</head>
+
+<body>
+	<ul>
+		<li>
+
+			<a href="/login">Login</a>
+		</li>
+	</ul>
+	<ul>
+		<li>
+			<a href="/register">Register</a>
+
+		</li>
+	</ul>
+	<p>
+		{% with messages = get_flashed_messages() %}
+		  {% if messages %}
+			<ul class=flashes>
+			{% for message in messages %}
+			  <li>{{ message }}</li>
+			{% endfor %}
+			</ul>
+		  {% endif %}
+		{% endwith %}
+	</p>
+	<div>
+		<h2>Search by Tag Name and/or Stars </h2>
+		
+		<form action="/search" method="GET">
+			<input type="text" name="search" value="{{query}}" placeholder = "italian or 5">
+			<input type="submit" value="Search" <b> Example searches: "italian and 5", "italian or 5", "italian", "5"  
+		</form>
+	</div>
+	<div>
+		<h2>Search by Recipie Title</h2>
+		<form action="/search-title" method="GET">
+			<input type="text" name="search" value="{{query}}" placeholder = "lasagna">
+			<input type="submit" value="Search">
+		</form>
+	</div>
+
+</body>
+
+</html>

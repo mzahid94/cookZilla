@@ -1,0 +1,34 @@
+<html>
+<head>
+</head>
+<body>
+    <div>
+       
+        <ul>
+            <li><a href="/home">back</a></li>
+        </ul>
+        <ul>
+            <li><a href="/logout">Logout</a></li>
+        </ul>
+    </div>
+    <p>
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <ul class=flashes>
+            {% for message in messages %}
+              <li>{{ message }}</li>
+            {% endfor %}
+            </ul>
+          {% endif %}
+        {% endwith %}
+    </p>
+    <h1>Upload Recipie picture</h1>
+<form action="/upload-event-picture" method="POST" enctype="multipart/form-data">
+	
+    <input type="number" name="eID" placeholder="Event Id" required/></br></br>
+    <input type="file" name = "event_picture" required/></br></br>
+	<input type="submit" value = "Post" />
+	{% if error %}
+		<p class="error"><strong>Error:</strong> {{error}}</p>
+	{% endif %}
+</form>

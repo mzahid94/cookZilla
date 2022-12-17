@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <p><b>Your Response </b>: {{rsvp_event.response}}</p>
+    <p><b>Event Id: </b>{{event.eID}}</p>
+    <p><b>Event Name: </b>{{event.eName}}</p>
+    <p><b>Event Description: </b>{{event.eDesc}}</p>
+    <p><b>Event date:</b>{{(event.eDate).strftime("%m/%d/%y")}}</p>
+    <p><b>Event Group:</b> {{event.gName}}</p>
+    <p><b>Event Group Admin:</b> {{event.gCreator}}</p>
+</body>
+</html>

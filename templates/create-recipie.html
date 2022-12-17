@@ -1,0 +1,101 @@
+<html>
+<head>
+</head>
+<body>
+
+    <p>
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <ul class=flashes>
+            {% for message in messages %}
+              <li>{{ message }}</li>
+            {% endfor %}
+            </ul>
+          {% endif %}
+        {% endwith %}
+    </p>
+    <h1>Create recipie</h1>
+<form action="/create-recipie" method="POST" enctype="multipart/form-data">
+	<input type="text" name = "title" placeholder="Title" required/> </br></br>
+	<input type="number" name = "num_of_serve" placeholder="Number of Servings" required/></br></br>
+
+  <h3>Steps</h3>
+  <div id="stepInput"></div>
+  <button id="stepFields" type="button">ADD</button>
+  <br>
+
+  <h3>Ingredients</h3>
+  <div id="ingredientInput"></div>
+  <button id="ingredientFields" type="button">ADD</button>
+  <br>
+
+  <h3>Tags</h3>
+  <div id="tagInput"></div>
+  <br>
+  <button id="tagFields" type="button">ADD</button>
+  <br>
+
+  <h3>Upload Picture</h3>
+  <div id="pictureInput">
+    <input type="file" name = "file[]" multiple/></br></br>
+  </div>
+  <br>
+
+
+  <br>
+	<input type="submit" value = "Post Recipie" />
+	
+</form>
+
+<div>
+  <br>  
+  
+      <li><a href="/home">back</a></li>
+      <li><a href="/logout">Logout</a></li>
+</div>
+
+</body>
+<script src="https://code.jquery.com/jquery-3.6.2.min.js" integrity="sha256-2krYZKh//PcchRtd+H+VyyQoZ/e3EcrkxhM8ycwASPA=" crossorigin="anonymous"></script>
+
+
+<script>
+  
+    let counter = 0
+    $("#stepFields").click(function () {
+      counter++
+      newRowAdd =
+          ` <div>
+            <input type="number" name = "step_num" placeholder="Step Number" value="${counter}" required/><br >
+            <textarea name="step_description" id="" cols="30" rows="10" placeholder="Step Description"></textarea>
+      
+          </div><br>`;
+      
+      $('#stepInput').append(newRowAdd);
+
+    });
+          
+    $("#ingredientFields").click(function () {
+      newRowAdd =
+            ` <div>
+              <input type="text" name = "ingredient_name" placeholder="Ingredient Name" required/> 
+              <input type="text" name = "ingredient_purchase_link" placeholder="Ingredient Purchase link"/> 
+              <input type="text" name = "unit_name" placeholder="Unit Name" required/> 
+              <input type="number" name = "unit_amount" placeholder="Amount" required/>
+            </div><br>`;      
+      $('#ingredientInput').append(newRowAdd);
+    });
+
+    $("#tagFields").click(function () {
+      newRowAdd =
+            ` 
+              <input type="text" name = "tag_text" placeholder="Type Tag here" required/>
+           `;
+            
+            $('#tagInput').append(newRowAdd);
+    });
+
+    
+  </script>
+
+
+</html>

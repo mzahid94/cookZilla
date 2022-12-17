@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <div>
+       
+        <ul>
+            <li><a href="/home">back</a></li>
+        </ul>
+    </div>
+    <p>
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <ul class=flashes>
+            {% for message in messages %}
+              <li>{{ message }}</li>
+            {% endfor %}
+            </ul>
+          {% endif %}
+        {% endwith %}
+    </p>
+    <h1>Search result for : {{query}}</h1>
+    {% if recipies %}
+    <ul>
+        {% for recipie in recipies %}
+        
+        <li><a href="/recipie-detail/{{recipie.recipeID}}">{{recipie.title}}</a></li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>No recipie found</p>
+    {% endif %}
+</body>
+</html>

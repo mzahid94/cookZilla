@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <div>
+       
+        <ul>
+            <li><a href="/home">back</a></li>
+        </ul>
+        <ul>
+            <li><a href="/logout">Logout</a></li>
+        </ul>
+    </div>
+    <p>
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <ul class=flashes>
+            {% for message in messages %}
+              <li>{{ message }}</li>
+            {% endfor %}
+            </ul>
+          {% endif %}
+        {% endwith %}
+    </p>
+    <h1>Title: {{recipie.title|title}}</h1>
+    <h1>ID: {{recipie.recipeID}}</h1>
+    <h3>Number of servings: {{recipie.numServings}}</h3>
+    <h3>Tag</h3>
+    {% for tag in recipie_tag %}
+    <p>{{tag.tagText}}</p>
+    {% endfor %}
+    <h3>Pictures</h3>
+    {% for pic in recipie_picture %}
+    <img src="{{url_for('static',filename="images/"+pic.pictureURL)}}" width="300" alt="">
+    {% endfor %}
+    <h3>Ingredients:</h3>
+    {% for ingredient in recipie_ingredient %}
+    <p>{{ingredient.iName|title}} : {{ingredient.amount}} {{ingredient.unitName}}</p>
+    {% endfor %}
+    <h3>Step</h3>
+    {% for i in step %}
+    <p>{{i.stepNo}} : {{i.sDesc}}</p>
+    {% endfor %}
+    <div>
+        <h2>Post a Review:</h2>
+        <form action="/recipie-review" method="POST" enctype="multipart/form-data">
+            <input type="hidden" name="recipie_id" value="{{recipie.recipeID}}">
+            <input type="text" name="revTitle" placeholder="Review Title"> <br><br>
+            <textarea name="revDesc" id="" cols="30" rows="10" placeholder="Review Description"></textarea><br><br>
+            <input type="number" name="stars" placeholder="Review Starts"><br><br>
+            <input type="file" name = "review_picture" required/></br></br>
+            <input type="submit" value="Post">
+        </form>
+    </div>
+    <div>
+        <h2>Previously posted review pictures</h2>
+        <div>
+            {% for pic in review_pictures %}
+            <img src="{{url_for('static',filename="images/"+pic.pictureURL)}}" width="200" alt="">
+            {% endfor %}
+        </div>
+        <h2>Previously posted review:</h2>
+        <div>
+
+                {% for review in reviews %}
+                <div style="border:1px solid black;">
+                    <h4>{{review.revTitle}}</h4>
+                    <p>{{review.revDesc}}</p>
+                    <p>{{review.stars}} stars by {{review.userName}}</p>
+                </div>
+                {% endfor %}
+
+        </div>
+    </div>
+</body>
+</html>

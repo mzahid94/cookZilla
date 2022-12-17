@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <p>
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <ul class=flashes>
+            {% for message in messages %}
+              <li>{{ message }}</li>
+            {% endfor %}
+            </ul>
+          {% endif %}
+        {% endwith %}
+    </p>
+    <h3>All Events</h3>
+    
+        {% for event in events %}
+        <div style="border:1px solid black;">
+            <h2>
+
+              {{event.eName}}
+
+            </h2>
+            <b>Event ID:</b>{{event.eID}} <br>
+            <br><b> Event Desciption:</b> {{event.eDesc}} <br>
+            <p><b>Date:</b> {{(event.eDate).strftime("%m/%d/%y")}}</p>
+
+            <form action ="/view-EventPictures" method="POST">
+                <td><input type="submit" value = "View Event Pictures" /></td>
+        
+                <tr style="display:none;">
+        
+                <td id = "eID"><input type = "hidden" name="eID" value ="{{event.eID}}"/></td>
+
+            </form> 
+
+            <form action ="/rsvpEvent" method="POST">
+                <td><input type="submit" value = "Rsvp To this Event" /></td>
+        
+                <tr style="display:none;">
+        
+                    <td id = "eID"><input type = "hidden" name="eID" value ="{{event.eID}}"/></td>
+                    <td id = "eName"><input type = "hidden" name="eName" value ="{{event.eName}}"/></td>
+            </tr>
+        
+        </form> 
+        
+        <a href="/home">Home</a>
+
+        </div>
+        {% endfor %}
+
+
+   
+</body>
+</html>

@@ -1,0 +1,39 @@
+<html>
+<head>
+</head>
+<body>
+    <div>
+       
+        <ul>
+            <li><a href="/home">back</a></li>
+        </ul>
+        <ul>
+            <li><a href="/logout">Logout</a></li>
+        </ul>
+    </div>
+    <p>
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <ul class=flashes>
+            {% for message in messages %}
+              <li>{{ message }}</li>
+            {% endfor %}
+            </ul>
+          {% endif %}
+        {% endwith %}
+    </p>
+    <h1>RSVP </h1>
+<form action="/create-rsvp" method="POST">
+	<input type="number" name = "event_id" placeholder="Event ID" required/> </br></br>
+	<input type="text" name = "response" placeholder="Response" required/> y/n</br></br>
+	<input type="submit" value ="Create"/>
+	{% if error %}
+		<p class="error"><strong>Error:</strong> {{error}}</p>
+	{% endif %}
+</form>
+
+
+</body>
+
+
+</html>
