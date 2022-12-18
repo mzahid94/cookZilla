@@ -297,7 +297,7 @@ def create_event():
         cursor.execute(query, (group_name, username,))
         group_data = cursor.fetchone()
 
-        print(group_data)
+        
         if group_data:
             query = 'INSERT INTO Event (eName,eDesc,eDate,gName,gCreator) VALUES(%s,%s,%s,%s,%s)'
             cursor.execute(query, (event_name, event_description,
@@ -305,20 +305,21 @@ def create_event():
             conn.commit()
 
             event_picture_lst = request.files.getlist("file[]")
-
-            for file in event_picture_lst:
-                print(file)
-                if file and allowed_file(file.filename):
-                    filename = secure_filename(file.filename)
-                    print(filename)
-                    file.save(os.path.join(
-                        app.config['UPLOAD_FOLDER'], filename))
-
-                    query = 'INSERT INTO eventPicture (pictureURL, eID) VALUES(%s, %s)'
-                    eID = cursor.lastrowid
-                    cursor.execute(query, (filename, eID))
-                    conn.commit()
+            
+            if event_picture_lst:
+                for file in event_picture_lst:
                     
+                    if file and allowed_file(file.filename):
+                        filename = secure_filename(file.filename)
+                        
+                        file.save(os.path.join(
+                            app.config['UPLOAD_FOLDER'], filename))
+
+                        query = 'INSERT INTO eventPicture (pictureURL, eID) VALUES(%s, %s)'
+                        eID = cursor.lastrowid
+                        cursor.execute(query, (filename, eID))
+                        conn.commit()
+                        
             cursor.close()
             flash(f'Successfully added Event')
         else:
@@ -366,8 +367,8 @@ def create_recipie():
                                                                                          unit_amount_lst):
                 print(ingredient_name, ingredient_purchase_link, unit_name, unit_amount)
 
-                query = 'SELECT * FROM Unit WHERE unitName = %s '
-                cursor.execute(query, unit_name)
+                query = 'SELECT * FROM ingredient WHERE iName = %s '
+                cursor.execute(query, ingredient_name)
                 ingredient_data = cursor.fetchone()
 
                 if not ingredient_data:
@@ -427,6 +428,22 @@ def create_recipie_step():
 
         cursor = conn.cursor()
 
+        query = 'SELECT postedBy FROM Recipe WHERE recipeID = %s AND postedBy = %s '
+        cursor.execute(query, (recipie_id, username,))
+        data = cursor.fetchone()
+        if not data:
+            flash(f'You cant add steps to other members posts:')
+            return render_template('create-step.html')
+        
+        
+        query = 'SELECT * FROM Step WHERE recipeID = %s AND stepNo = %s '
+        cursor.execute(query, (recipie_id, step_num,))
+        data = cursor.fetchone()
+        if data:
+            flash(f'Step already exists:')
+            return render_template('create-step.html')
+            
+        
         query = 'SELECT recipeID, title FROM Recipe WHERE recipeID = %s AND postedBy = %s '
         cursor.execute(query, (recipie_id, username,))
         data = cursor.fetchone()
@@ -440,6 +457,7 @@ def create_recipie_step():
         else:
             flash(f'recipie with this id is not available:{recipie_id}')
         return redirect(url_for('home'))
+    
     return render_template('create-step.html')
 
 
@@ -484,7 +502,7 @@ def create_recipie_ingredient():
         unit_amount = request.form.get('unit_amount')
 
         cursor = conn.cursor()
-
+        
         query = 'SELECT recipeID, title FROM Recipe WHERE recipeID = %s AND postedBy = %s '
         cursor.execute(query, (recipie_id, username,))
         data = cursor.fetchone()
@@ -514,7 +532,7 @@ def create_recipie_ingredient():
             conn.commit()
             flash(f'successfully Added Ingredient to this recipie :{recipie_id}')
         else:
-            flash(f'recipie with this id is not available:{recipie_id}')
+            flash(f'cant add ingredients to someone elses posts')
 
         cursor.close()
 
@@ -624,11 +642,13 @@ def recipie_details(id):
     step = cursor.fetchall()
     print(step)
 
-    query = 'SELECT * FROM RecipeIngredient WHERE recipeID = %s'
+    query = 'SELECT * from recipeingredient NATURAl join ingredient WHERE recipeID = %s'
     cursor.execute(query, (id,))
     recipie_ingredient = cursor.fetchall()
     print(recipie_ingredient)
 
+    
+    
     # Review section
     query = 'SELECT * FROM Review WHERE recipeID = %s'
     cursor.execute(query, (id,))
@@ -668,48 +688,75 @@ def rsvp_event_detail_view(id):
     return render_template('rsvp-event-detail.html', event=event, rsvp_event=rsvp_event)
 
 
-@app.route('/recipie-review', methods=['POST'])
+@app.route('/recipie-review', methods=['GET', 'POST']) 
 def recipie_review():
     if 'username' not in session:
         return redirect(url_for('hello'))
-    username = session['username']
-    recipie_id = request.form.get('recipie_id')
-    print(recipie_id)
-    review_title = request.form.get('revTitle')
-    review_description = request.form.get('revDesc')
-    review_stars = request.form.get('stars')
-    print(review_title, review_description, review_stars)
-    if 'review_picture' not in request.files:
-        flash('No file part')
-        return redirect(request.url)
-    file = request.files['review_picture']
+    
+    
+    if request.method == "POST":
+        username = session['username']
+        recipie_id = request.form.get('recipie_id')
+        print(recipie_id)
+        review_title = request.form.get('revTitle')
+        review_description = request.form.get('revDesc')
+        review_stars = request.form.get('stars')
+        print(review_title, review_description, review_stars)
+        
+        
+        if review_title and review_description and review_stars:
+            try:
+                cursor = conn.cursor()
+                query = 'INSERT INTO Review (revTitle, revDesc,stars,userName,recipeID) VALUES(%s, %s, %s,%s, %s)'
+                cursor.execute(query, (review_title, review_description, review_stars, username, recipie_id))
+                conn.commit()
+                flash(f'Successfully added review')
+            except Exception:
+                flash(f'You already reviewed this recipie 1')
+        elif review_description and review_stars:
+            try:
+                cursor = conn.cursor()
+                query = 'INSERT INTO Review (revDesc,stars,userName,recipeID) VALUES(%s, %s, %s,%s)'
+                cursor.execute(query, (review_description, review_stars, username, recipie_id))
+                conn.commit()
+                flash(f'Successfully added review')
+            except Exception:
+                flash(f'You already reviewed this recipie 2')
+        elif review_stars:
+            try:
+                cursor = conn.cursor()
+                query = 'INSERT INTO Review (stars,userName,recipeID) VALUES(%s, %s, %s)'
+                cursor.execute(query, (review_stars, username, recipie_id))
+                conn.commit()
+                flash(f'Successfully added review')
+            except Exception:
+                flash(f'You already reviewed this recipie 3')
+        
+        
+        
+        file = request.files['review_picture']
 
-    if file and allowed_file(file.filename):
-        filename = secure_filename(file.filename)
-        print(filename)
-        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-    else:
-        flash('Allowed file types are txt, pdf, png, jpg, jpeg, gif')
-        return redirect(request.url)
+        if file:
+            if allowed_file(file.filename):
+                filename = secure_filename(file.filename)
+                print(filename)
+                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            else:
+                flash('Allowed file types are txt, pdf, png, jpg, jpeg, giff')
+        else:
+            return redirect(url_for('home'))
 
-    if filename and review_title and review_description and review_stars:
-        try:
-            cursor = conn.cursor()
-
-            query = 'INSERT INTO Review (revTitle, revDesc,stars,userName,recipeID) VALUES(%s, %s, %s,%s, %s)'
-            cursor.execute(query, (review_title, review_description, review_stars, username, recipie_id))
-            conn.commit()
-
-            query = 'INSERT INTO ReviewPicture (pictureURL, userName,recipeID) VALUES(%s, %s, %s)'
-            cursor.execute(query, (filename, username, recipie_id))
-            conn.commit()
-
-            cursor.close()
-            flash(f'successfully Added Recipie picture to this recipie :{recipie_id}')
-        except Exception:
-            flash(f'You already reviewed this recipie')
-    else:
-        flash(f'all details is required to post a review')
+        if filename:
+            try:
+                cursor = conn.cursor()
+                query = 'INSERT INTO ReviewPicture (pictureURL, userName,recipeID) VALUES(%s, %s, %s)'
+                cursor.execute(query, (filename, username, recipie_id))
+                conn.commit()
+                cursor.close()
+            except Exception:
+                flash(f'You already Inserted this picture')
+                
+    flash(f'Successfully added review')      
     return redirect(url_for('home'))
 
 
@@ -722,40 +769,43 @@ def show_recipies():
     print(term)
     if(term.find('and') != -1):
             search = term.split('and')
-            query = """select * from recipe r left join recipetag rt on r.recipeID = rt.recipeID 
-                    left join review rw on r.recipeID = rw.recipeID where rt.tagText = %s
-                        and rw.stars = %s"""
-            cursor.execute(query, (search[0].strip(),int(search[1].strip())))
-            reviews = cursor.fetchall()
-            print(reviews)
-            lst_id = []
-            for review in reviews:
-                lst_id.append(review['recipeID'])
-            for i in lst_id:
-                query = 'SELECT recipeID, title FROM Recipe WHERE recipeID = %s ORDER BY recipeID DESC'
-                cursor.execute(query, (i,))
-                recipie = cursor.fetchone()
-                recipies.append(recipie)
+            
+            query = 'Create or REPLACE view recipesWithGivenAvg as (SELECT recipeID, avg(stars) FROM Review group by recipeID having avg(stars) >= %s)'
+            cursor.execute(query,int(search[1].strip()))
+            
+            query = """select distinct r.recipeID, r.title
+                        from recipe r NATURAL join recipetag rt 
+                        where rt.tagText = %s
+                        AND r.recipeID in (SELECT recipeID
+                                                FROM recipesWithGivenAvg)"""
+                                                
+            cursor.execute(query, (search[0].strip()))
+            data = cursor.fetchall()
+            
+            for i in data:
+                recipies.append(i)
+           
                 
     elif(term.find('or') != -1):
             search = term.split('or')
-            query = """select * from recipe r left join recipetag rt on r.recipeID = rt.recipeID 
-                    left join review rw on r.recipeID = rw.recipeID where rt.tagText = %s
-                        or rw.stars = %s"""
-            cursor.execute(query, (search[0].strip(),int(search[1].strip())))
-            reviews = cursor.fetchall()
-            print(reviews)
-            lst_id = []
-            for review in reviews:
-                lst_id.append(review['recipeID'])
-            for i in lst_id:
-                query = 'SELECT recipeID, title FROM Recipe WHERE recipeID = %s ORDER BY recipeID DESC'
-                cursor.execute(query, (i,))
-                recipie = cursor.fetchone()
-                recipies.append(recipie)
+            
+            query = 'Create or REPLACE view recipesWithGivenAvg as (SELECT recipeID, avg(stars) FROM Review group by recipeID having avg(stars) >= %s)'
+            cursor.execute(query,int(search[1].strip()))
+            
+            query = """select distinct r.recipeID, r.title
+                        from recipe r NATURAL join recipetag rt 
+                        where rt.tagText = %s
+                        OR r.recipeID in (SELECT recipeID
+                                                FROM recipesWithGivenAvg)"""
+                                                
+            cursor.execute(query, (search[0].strip()))
+            data = cursor.fetchall()
+            
+            for i in data:
+                recipies.append(i)
                 
     elif term.isnumeric():
-            query = 'SELECT * FROM Review WHERE stars = %s'
+            query = 'SELECT recipeID, avg(stars) FROM Review group by recipeID having avg(stars) >= %s'
             cursor.execute(query, (int(term)))
             reviews = cursor.fetchall()
             print(reviews)
@@ -834,8 +884,8 @@ def create_rsvp():
         response = request.form.get('response')
 
         cursor = conn.cursor()
-        query = 'SELECT * FROM Event WHERE eID = %s And gCreator = %s'
-        cursor.execute(query, (event_id, username,))
+        query = 'SELECT * FROM Event WHERE eID = %s'
+        cursor.execute(query, (event_id))
         event_data = cursor.fetchone()
 
         print(event_data)

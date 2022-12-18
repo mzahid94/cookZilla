@@ -5,6 +5,12 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+
+    <style>
+      table, th, td {
+          border: 1px solid black;
+        }
+  </style>
 </head>
 <body>
     <p>
@@ -22,12 +28,14 @@
     <table>
       <th>Group Name</th>
       <th>Group Creator</th>
+      <th>Group Description</th>
       <th>Join Group</th>
       
       {% for group in groups%}
       <tr>
         <td>{{group.gName}}</td>
         <td>{{group.gCreator}}</td>
+        <td>{{group.gDesc}}</td>
         
         <form action ="/join-group" method="POST">
         <td><input type="submit" value = "Join Group" /></td>

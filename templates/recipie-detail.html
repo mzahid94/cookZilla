@@ -38,7 +38,7 @@
     {% endfor %}
     <h3>Ingredients:</h3>
     {% for ingredient in recipie_ingredient %}
-    <p>{{ingredient.iName|title}} : {{ingredient.amount}} {{ingredient.unitName}}</p>
+    <p>{{ingredient.iName|title}} : {{ingredient.amount}} {{ingredient.unitName}} <a  href={{ingredient.purchaseLink}}> {{ingredient.purchaseLink}} </a></p>
     {% endfor %}
     <h3>Step</h3>
     {% for i in step %}
@@ -51,7 +51,7 @@
             <input type="text" name="revTitle" placeholder="Review Title"> <br><br>
             <textarea name="revDesc" id="" cols="30" rows="10" placeholder="Review Description"></textarea><br><br>
             <input type="number" name="stars" placeholder="Review Starts"><br><br>
-            <input type="file" name = "review_picture" required/></br></br>
+            <input type="file" name = "review_picture"></br></br>
             <input type="submit" value="Post">
         </form>
     </div>
@@ -76,4 +76,18 @@
         </div>
     </div>
 </body>
+
+<script src="https://code.jquery.com/jquery-3.6.2.min.js" integrity="sha256-2krYZKh//PcchRtd+H+VyyQoZ/e3EcrkxhM8ycwASPA=" crossorigin="anonymous"></script>
+
+<script>
+
+    $('a[href=" "').hide();
+
+    $(document).ready(function(){
+        $('a[href=" "').hide();
+    });
+
+</script>
+
+
 </html>
