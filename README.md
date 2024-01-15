@@ -17,7 +17,7 @@ Cookzilla is a dynamic web application designed for culinary enthusiasts. This p
 **Other Tools:** Werkzeug for security utilities, Flask sessions for user session management. <br>
 ## Installation and Setup
 **Clone the Repository:** git clone [repository-url] <br>
-**Set Up the Database:** Configure MySQL with the appropriate schema. <br>
+**Set Up the Database:** Configure MySQL with the appropriate by running the sql queries in the file "cookzilla_db_creation_sql". <br>
 **Configure Environment:** Set up your Python environment and install necessary packages from requirements.txt. <br>
 **Run the Application:** Execute python app.py to start the Flask server. <br>
 
